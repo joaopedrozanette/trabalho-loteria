@@ -1,0 +1,143 @@
+<?php
+
+selecionar_lotaria();
+
+function selecionar_lotaria()
+{
+    echo "1= Mega Sena \n";
+    echo "2= Quina \n";
+    echo "3= Lotomania \n";
+
+    $opcao = (int)readline("Escolha: ");
+
+    $jogoVencedor = obterJogoEscolhido($opcao);
+
+    switch ($opcao)
+    {
+        case 1:
+            megaLoteria($jogoVencedor);
+            break;
+        case 2:
+            quina($jogoVencedor);
+            break;
+        case 3;
+            lotomania($jogoVencedor);
+            break;
+        default:
+            echo "Erro. Por favor, selecione corretamente como explicado.\n";
+            selecionar_lotaria();
+            break;
+    }
+}
+
+function obterNumDezenas($jogo, $min, $max)
+{
+    $numDezenas = readline("Quantas dezenas para {$jogo}? ({$min} a {$max}): ");
+
+    if ($numDezenas < $min || $numDezenas > $max)
+    {
+        echo "Quantidade de dezenas inválida para {$jogo}.\n";
+        return obterNumDezenas($jogo, $min, $max);
+    }
+
+    return $numDezenas;
+}
+
+function obterNumApostas()
+{
+    return (int)readline("Quantas apostas? ");
+}
+
+function gerarDezenas($min, $max, $quantidade)
+{
+    $dezenas = [];
+
+    while (count($dezenas) < $quantidade)
+    {
+        $dezena = rand($min, $max);
+        if (!in_array($dezena, $dezenas))
+        {
+            $dezenas[] = $dezena;
+        }
+    }
+
+    sort($dezenas);
+
+    return $dezenas;
+}
+
+function megaLoteria($jogoVencedor)
+{
+    $numDezenas = obterNumDezenas("Mega Sena", 6, 20);
+    $numApostas = obterNumApostas();
+
+    for ($i = 1; $i <= $numApostas; $i++)
+    {
+        $dezenas = gerarDezenas(1, 60, $numDezenas);
+        exibirAposta($i, $dezenas);
+        compararJogos($dezenas, $jogoVencedor);
+    }
+
+    $gastoPorAposta = [5, 35, 140, 420, 1050, 2310, 4620, 8580, 15015, 25025, 40040, 61880, 92820, 135660, 193800];
+    $totalGasto = $numApostas * $gastoPorAposta[$numDezenas - 6];
+    echo "O total de dinheiro gasto na Mega Sena: R$ {$totalGasto}\n";
+}
+
+function quina($jogoVencedor)
+{
+    $numDezenas = obterNumDezenas("Quina", 5, 15);
+    $numApostas = obterNumApostas();
+
+    if ($numDezenas >= 5) {
+        $gastoPorApostaQuina = [2.5, 5, 25, 125, 600, 3125, 15625, 78125, 390625, 1953125, 9765625, 48828125, 244140625, 1220703125, 6103515625];
+        $totalQuina = $numApostas * $gastoPorApostaQuina[$numDezenas - 5];
+        echo "Total de dinheiro gasto na Quina: R$ {$totalQuina}\n";
+    } else {
+        echo "Número de dezenas inválido para a Quina.\n";
+    }
+}
+
+function obterJogoEscolhido($opcao)
+{
+    switch ($opcao)
+    {
+        case 1:
+            return gerarDezenas(1, 60, 6);
+        case 2:
+            return gerarDezenas(1, 80, 5);
+        case 3:
+            return gerarDezenas(50, 50, 1);
+        default:
+            return [];
+    }
+}
+
+function exibirAposta($numAposta, $dezenas)
+{
+    echo "Aposta {$numAposta}: " . implode(', ', $dezenas) . "\n";
+}
+
+function compararJogos($jogoUsuario, $jogoVencedor)
+{
+    $numerosAcertados = array_intersect($jogoUsuario, $jogoVencedor);
+    $quantidadeAcertos = count($numerosAcertados);
+
+    echo "Acertos na Aposta: $quantidadeAcertos\n";
+}
+
+function lotomania($jogoVencedor){
+
+    $numDezenas = obterNumDezenas("Lotomania(A Lotomania só pode ser jogada apostando 50 dezenas)", 50, 50);
+    $numApostas = obterNumApostas();
+
+    for ($i = 1; $i <= $numApostas; $i++)
+    {
+        $dezenas = gerarDezenas(1, 100, 1);
+        exibirAposta($i, $dezenas);
+        compararJogos($dezenas, $jogoVencedor);
+    }
+    $gastoPorAposta = 3;
+    $totalGasto = $numApostas * $gastoPorAposta;
+    echo "O total de dinheiro gasto na Lotomania: R$ {$totalGasto}\n";
+}
+?>
