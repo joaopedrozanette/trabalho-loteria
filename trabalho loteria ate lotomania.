@@ -127,12 +127,12 @@ function compararJogos($jogoUsuario, $jogoVencedor)
 
 function lotomania($jogoVencedor){
 
-    $numDezenas = obterNumDezenas("Lotomania(A Lotomania só pode ser jogada apostando 50 dezenas)", 50, 50);
+    $numDezenas = obterNumDezenas("Lotomania(A Lotomania só pode ser jogada apostando 50 dezenas)", 1, 50);
     $numApostas = obterNumApostas();
 
     for ($i = 1; $i <= $numApostas; $i++)
     {
-        $dezenas = gerarDezenas(1, 100, 1);
+        $dezenas = gerarDezenas(1, 100, $numDezenas);
         exibirAposta($i, $dezenas);
         compararJogos($dezenas, $jogoVencedor);
     }
